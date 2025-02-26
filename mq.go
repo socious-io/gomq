@@ -113,6 +113,6 @@ func Init() {
 // Register Services
 func registerConsumers(Mq MessageQueue) {
 	for channel, worker := range config.Consumers {
-		Mq.subscribe(categorizeChannel(config.ChannelDir, channel), worker)
+		Mq.subscribe(channel, worker)
 	}
 }
