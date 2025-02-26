@@ -66,7 +66,7 @@ func (mq *MessageQueue) queueSubscribe(channel string, count int, consumer func(
 	}
 }
 
-func (mq *MessageQueue) sendJson(channel string, message interface{}) {
+func (mq *MessageQueue) SendJson(channel string, message interface{}) {
 	client := mq.client
 	channel = categorizeChannel(config.ChannelDir, channel)
 
