@@ -101,7 +101,7 @@ func Connect() {
 func Init() {
 
 	Connect()
-	registerConsumers(Mq)
+	registerConsumers()
 	for {
 		if Mq.client.IsClosed() {
 			return
@@ -111,7 +111,7 @@ func Init() {
 }
 
 // Register Services
-func registerConsumers(Mq MessageQueue) {
+func registerConsumers() {
 	for channel, worker := range config.Consumers {
 		Mq.subscribe(channel, worker)
 	}
