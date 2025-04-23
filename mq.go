@@ -3,6 +3,10 @@ package gomq
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/nats-io/nats.go"
 )
@@ -83,11 +87,24 @@ func (mq *MessageQueue) SendJson(channel string, message interface{}) {
 }
 
 func Connect() {
-	NatsClient, err := nats.Connect(config.Url, nats.Token(config.Token))
-	// defer NatsClient.Drain()
+	NatsClient, err := nats.Connect(
+		config.Url,
+		nats.Token(config.Token),
+		nats.DisconnectHandler(func(nc *nats.Conn) {
+			fmt.Println("[NATS] Disconnected")
+		}),
+		nats.ReconnectHandler(func(nc *nats.Conn) {
+			fmt.Println("[NATS] Reconnected to", nc.ConnectedUrl())
+		}),
+		nats.ClosedHandler(func(nc *nats.Conn) {
+			fmt.Println("[NATS] Connection closed")
+		}),
+	)
+	defer NatsClient.Drain()
 
 	if err != nil {
 		fmt.Printf("Nats failed to connect, Error: %s", err)
+		os.Exit(1)
 	} else {
 		fmt.Printf("Nats is connected to: %s\n", NatsClient.ConnectedAddr())
 	}
@@ -102,11 +119,15 @@ func Init() {
 
 	Connect()
 	registerConsumers()
-	for {
-		if Mq.client.IsClosed() {
-			return
-		}
-	}
+
+	// Wait for termination signal (CTRL+C, Docker stop, etc.)
+	terminationSignal := make(chan os.Signal, 1)
+	signal.Notify(terminationSignal, syscall.SIGINT, syscall.SIGTERM)
+
+	<-terminationSignal
+	fmt.Println("[NATS] Shutting down gracefully...")
+	Mq.client.Drain()
+	time.Sleep(1 * time.Second) // give time to drain before exit
 
 }
 
