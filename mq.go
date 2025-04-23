@@ -100,7 +100,6 @@ func Connect() {
 			fmt.Println("[NATS] Connection closed")
 		}),
 	)
-	defer NatsClient.Drain()
 
 	if err != nil {
 		fmt.Printf("Nats failed to connect, Error: %s", err)
