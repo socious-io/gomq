@@ -21,7 +21,6 @@ var Mq MessageQueue
 
 func (mq *MessageQueue) subscribe(channel string, consumer func(interface{})) {
 	client := mq.client
-	channel = categorizeChannel(config.ChannelDir, channel)
 
 	mq.consumers[channel] = consumer
 
@@ -44,7 +43,6 @@ func (mq *MessageQueue) subscribe(channel string, consumer func(interface{})) {
 
 func (mq *MessageQueue) queueSubscribe(channel string, count int, consumer func(interface{})) {
 	client := mq.client
-	channel = categorizeChannel(config.ChannelDir, channel)
 
 	mq.consumers[channel] = consumer
 	queue := "main"

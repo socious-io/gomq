@@ -11,10 +11,6 @@ type Config struct {
 	Consumers  map[string]func(interface{})
 }
 
-func AddConsumer(channel string, worker func(interface{})) {
-	config.Consumers[channel] = worker
-}
-
 // Setup initializes the MQ SDK with the provided configuration.
 func Setup(cfg Config) error {
 
