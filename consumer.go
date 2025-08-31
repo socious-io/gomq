@@ -1,7 +1,6 @@
 package gomq
 
 import (
-	"context"
 	"encoding/json"
 	"log"
 
@@ -14,10 +13,8 @@ type AddConsumerParams struct {
 	IsCategorized bool
 }
 
-func NewConsumer[T any](fn func(context.Context, T) error) func(interface{}) {
+func NewConsumer[T any](fn func(T) error) func(interface{}) {
 	return func(data interface{}) {
-		ctx := context.Background()
-
 		var form T
 		b, err := json.Marshal(data)
 		if err != nil {
@@ -33,7 +30,7 @@ func NewConsumer[T any](fn func(context.Context, T) error) func(interface{}) {
 			return
 		}
 
-		if err := fn(ctx, form); err != nil {
+		if err := fn(form); err != nil {
 			log.Printf("Consumer: handler failed: %v", err)
 		}
 	}
