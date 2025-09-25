@@ -39,7 +39,6 @@ func NewConsumer[T any](fn func(T) error) func(interface{}) {
 func AddConsumer(params AddConsumerParams) {
 	if params.IsCategorized {
 		params.Channel = categorizeChannel(config.ChannelDir, params.Channel)
-		return
 	}
 
 	config.Consumers[params.Channel] = params.Consumer

@@ -18,3 +18,7 @@ func Setup(cfg Config) error {
 	config = &cfg
 	return nil // Return nil to indicate successful setup.
 }
+
+func GetConfig() *Config {
+	return config
+}
